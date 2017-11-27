@@ -30,6 +30,38 @@ void testes()
 	printAdj(g);
 }
 
+void teste_kruskal()
+{
+	Grafo* g = criar(7);
+	inserirVertice(g, 'A');
+	inserirVertice(g, 'B');
+	inserirVertice(g, 'C');
+	inserirVertice(g, 'D');
+	inserirVertice(g, 'E');
+	inserirVertice(g, 'F');
+	inserirVertice(g, 'G');
+
+	inserirAresta(g, 'A', 'A', 'B', 7);
+	inserirAresta(g, 'B', 'A', 'D', 5);
+	inserirAresta(g, 'E', 'C', 'E', 5);
+	inserirAresta(g, 'I', 'D', 'F', 6);
+	inserirAresta(g, 'C', 'B', 'D', 9);
+	inserirAresta(g, 'D', 'B', 'C', 8);
+	
+	inserirAresta(g, 'F', 'E', 'G', 9);
+	inserirAresta(g, 'G', 'F', 'G', 11);
+	inserirAresta(g, 'H', 'F', 'E', 8);
+	
+	inserirAresta(g, 'J', 'D', 'E', 15);
+	inserirAresta(g, 'K', 'B', 'E', 7);	
+
+	kruskal(g);
+
+	/*printVertices(g);
+	printArestas(g);
+	printAdj(g);*/
+}
+
 void menu()
 {
 	printf("1. CV v -- Cria um vertice com o identificador v.\n\n");
@@ -44,15 +76,21 @@ void menu()
 
 int main()
 {
-	menu();
+	//menu();
 	//testes();
+
+	teste_kruskal();
+	printf("\n\n");
+	system("PAUSE");
+
+	return 1;
 
 	Grafo* g = criar(5);
 	char command[100];	
 	while (true)
-	{
-		//menu();
+	{		
 		system("CLS");
+		menu();
 		printf("Digite o comando: ");
 		scanf_s("%s", command, 100);
 

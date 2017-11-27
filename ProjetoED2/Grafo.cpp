@@ -1,10 +1,12 @@
 #define _CRT_SECURE_NO_DEPRECATE
 #define _CRT_SECURE_NO_WARNINGS
-#define debug
+//#define debug
+#define INFINITY INT_MAX
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 #include "Grafo.h"
 
 /*
@@ -19,6 +21,7 @@ struct vertice {
 	Vertice* ant;
 	char nome;
 	int valor;
+	int conj;
 };
 
 struct aresta {
@@ -37,6 +40,96 @@ struct grafo {
 	int ocup_vertices;
 	int ocup_arestas;
 };
+
+int kruskal(Grafo* g)
+{
+	if(g != NULL)
+	{			
+		Aresta** arestas = (Aresta**)malloc(sizeof(Aresta*) * g->num_arestas);
+		Aresta** tree = (Aresta**)malloc(sizeof(Aresta*) * g->num_arestas);		
+		int offset = 0;
+		int mst = 0;
+		int idx = 0;
+
+		// 1. Inicializando estrutura de arestas com NULL.
+		for(int a = 0; a < g->num_arestas; a++)
+		{
+			tree[a] = NULL;
+			arestas[a] = (Aresta*)malloc(sizeof(Aresta));
+			arestas[a]->nome = g->arestas[a]->nome;
+			arestas[a]->peso = g->arestas[a]->peso;
+			arestas[a]->orig = g->arestas[a]->orig;
+			arestas[a]->dest = g->arestas[a]->dest;
+		}
+
+		// Inicializando conjuntos dos vértices.
+		for(int a = 0; a < g->num_vertices; a++)
+		{
+			if(g->vertices[a] != NULL)
+			{
+				g->vertices[a]->conj = a+1;
+			}
+		}		
+
+		// 2. Ordenar arestas por distância crescente. (Bubble Sort)
+		while(offset < g->num_arestas - 1)
+		{
+			for(int b = 0; b < g->num_arestas - offset - 1; b++)
+			{
+				if( arestas[b+1]->peso < arestas[b]->peso )
+				{					
+					Aresta* aux = arestas[b];
+					arestas[b] = arestas[b+1];
+					arestas[b+1] = aux;
+				}
+			}			
+			
+			offset++;
+		}		
+
+		// 3. Executar o algoritmo de Kruskal.
+		for(int x = 0; x < 5; x++)
+		{
+			for(int a = 0; a < g->num_arestas; a++)
+			{
+				if(g->arestas[a] != NULL)
+				{
+					int v1 = g->arestas[a]->orig;
+					int v2 = g->arestas[a]->dest;
+
+					if( g->vertices[v1]->conj != g->vertices[v2]->conj )
+					{						
+						g->vertices[v2]->conj =  g->vertices[v1]->conj;
+						printf("Uniu %c e %c com peso %d\n", g->vertices[v1]->nome, g->vertices[v2]->nome, arestas[a]->peso);
+						tree[idx] = (Aresta*)malloc(sizeof(Aresta));
+						tree[idx]->nome = g->arestas[a]->nome;
+						tree[idx]->peso = g->arestas[a]->peso;
+						tree[idx]->orig = g->arestas[a]->orig;
+						tree[idx++]->dest = g->arestas[a]->dest;
+						mst += g->arestas[a]->peso;
+					}
+					else
+					{
+						//printf("Ciclo evitado entre %c e %c.\n", g->vertices[v1]->nome, g->vertices[v2]->nome);
+					}			
+				}
+			}
+		}
+
+		printf("Total: %d\n", mst);
+
+		// Zerando conjuntos dos vértices.
+		for(int a = 0; a < g->num_vertices; a++)
+		{
+			if(g->vertices[a] != NULL)
+			{
+				g->vertices[a]->conj = -1;
+			}
+		}
+	}
+
+	return -1;
+}
 
 Grafo* carregar(char* arquivo)
 {
@@ -384,6 +477,7 @@ void inserirVertice(Grafo* g, char nome) // OK
 				g->vertices[a]->ant = NULL;
 				g->vertices[a]->nome = nome;
 				g->vertices[a]->valor = 0;
+				g->vertices[a]->conj = -1;
 				g->ocup_vertices++;
 				#ifdef debug
 				printf("Inseriu vertice %c.\n\n", nome);

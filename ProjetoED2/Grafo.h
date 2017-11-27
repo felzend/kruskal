@@ -6,6 +6,8 @@ Grafo* criar(int num_vertices);
 Grafo* carregar(char* arquivo);
 void salvar(Grafo* g, char* arquivo);
 void finalizar(Grafo* g);
+int kruskal(Grafo* g);
+int ciclico(int** matriz, int num_vertices);
 
 Vertice* getVertice(Grafo* g, char nome);
 Aresta* getAresta(Grafo* g, char nome);
