@@ -3,6 +3,10 @@ typedef struct aresta Aresta;
 typedef struct grafo Grafo;
 
 Grafo* criar(int num_vertices);
+Grafo* carregar(char* arquivo);
+void salvar(Grafo* g, char* arquivo);
+void finalizar(Grafo* g);
+
 Vertice* getVertice(Grafo* g, char nome);
 Aresta* getAresta(Grafo* g, char nome);
 int getVerticeIndex(Grafo* g, char nome);
